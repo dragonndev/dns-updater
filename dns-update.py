@@ -2,6 +2,13 @@ import httplib2
 import json
 import logging
 
+DYN_HOST_NAME = "mobile.bit-shift.net"
+DNS_REGISTRAR_API_URL = ""
+
+def set_new_ip(ip_address):
+    h = httplib2.Http(".cache")
+    (resp_headers, content) = h.request(DNS_REGISTRAR_API_URL, "POST", body="", headers={})
+
 def retrieve_ip_address():
     h = httplib2.Http(".cache")
     (resp_headers, content) = h.request("https://api.ipify.org?format=json", "GET")
@@ -21,4 +28,5 @@ def create_logger():
 if __name__ == '__main__':
     create_logger()
     ext_ip = retrieve_ip_address()
+    set_new_ip(ext_ip)
     logging.info("External IP Address is %s" % ext_ip)
