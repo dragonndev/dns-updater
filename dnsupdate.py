@@ -6,12 +6,11 @@ import httplib2
 class DNSUpdater(object):
     '''Class to update IP address information for a dynamic DNS hosting service'''
     dyn_host_name = "mytestdomain.strangled.net"
-    dns_registration_api_url = "https://sync.afraid.org/u/%s/?hostname=%s&myip=%s&content-type=json"
+    dns_registration_api_url = "https://sync.afraid.org/u/%s/?myip=%s&content-type=json"
 
     def __init__(self):
         self.create_logger()
         self.domain_api_key = self.load_dns_api_key_from_environment()
-        pass
 
     def update_dyn_dns_setting(self):
         ext_ip = self.retrieve_ip_address()
@@ -19,7 +18,7 @@ class DNSUpdater(object):
         logging.info("External IP Address is %s", ext_ip)
 
     def create_dns_update_url(self, ip_address):
-        update_url = self.dns_registration_api_url % (self.domain_api_key, self.dyn_host_name, ip_address)
+        update_url = self.dns_registration_api_url % (self.domain_api_key, ip_address)
         logging.debug("Update URL: %s", update_url)
         return update_url
 
@@ -35,7 +34,7 @@ class DNSUpdater(object):
         (resp_headers, content) = h_client.request("https://api.ipify.org?format=json", "GET")
         logging.debug("Response Headers: %s", resp_headers)
         logging.debug("Response JSON: %s", content)
-        if isinstance(content) is bytes:
+        if isinstance(content, bytes):
             logging.debug("Type is Bytes")
 
         content_str = content.decode('utf-8')
