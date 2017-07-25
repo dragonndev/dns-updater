@@ -40,7 +40,7 @@ class DNSUpdater(object):
         content_str = content.decode('utf-8')
 
         resp_json = json.loads(content_str)
-        return "192.168.1.1"#resp_json["ip"]
+        return resp_json["ip"]
 
     def load_dns_api_key_from_environment(self):
         domain_api_key = os.getenv('FREE_DNS_TOKEN')
