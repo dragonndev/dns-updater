@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-import httplib2
+import httplib2 #https://github.com/httplib2/httplib2
 
 class DNSUpdater(object):
     '''Class to update IP address information for a dynamic DNS hosting service'''
