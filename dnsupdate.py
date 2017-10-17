@@ -55,3 +55,4 @@ class DNSUpdater(object):
 
 DNS_UPDATE = DNSUpdater()
 DNS_UPDATE.update_dyn_dns_setting()
+#PrintOut DNS settings for sub-domain to validate IP address has been updated
