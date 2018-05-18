@@ -1,4 +1,4 @@
 .cache
 *.log
 *.pdf
-.vscode/settings.json
+*settings.json
