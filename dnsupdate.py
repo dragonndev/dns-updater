@@ -4,7 +4,9 @@ import os
 import httplib2 #https://github.com/httplib2/httplib2
 
 class DNSUpdater(object):
+
     '''Class to update IP address information for a dynamic DNS hosting service'''
+    
     dyn_host_name = "mytestdomain.strangled.net"
     dns_registration_api_url = "https://sync.afraid.org/u/%s/?myip=%s&content-type=json"
 
