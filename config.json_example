@@ -1,4 +1,4 @@
 {
         "dns_api_token" : "abcdefg1234",
-        "dynamic_dns_hostname" : "abc.host.com"
+        "dns_hostname" : "abc.host.com"
 }
