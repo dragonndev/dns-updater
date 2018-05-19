@@ -5,14 +5,14 @@ import httplib2 #https://github.com/httplib2/httplib2
 
 class DNSUpdater(object):
 
-    '''Class to update IP address information for a dynamic DNS hosting service'''
+    """Class to update IP address information for a dynamic DNS hosting service"""
     
     dyn_host_name = "mytestdomain.strangled.net"
     dns_registration_api_url = "https://sync.afraid.org/u/%s/?myip=%s&content-type=json"
 
     def __init__(self):
         self.create_logger()
-        self.domain_api_key = self.load_dns_api_key_from_environment()
+        self.domain_api_key = self.load_dns_api_key_from_file()
 
     def update_dyn_dns_setting(self):
         ext_ip = self.retrieve_ip_address()
@@ -44,12 +44,15 @@ class DNSUpdater(object):
         resp_json = json.loads(content_str)
         return resp_json["ip"]
 
-    def load_dns_api_key_from_environment(self):
-        domain_api_key = os.getenv('FREE_DNS_TOKEN')
-        if not domain_api_key:
-            logging.error("Dynamic DNS token not set in environment!")
-        else:
-            logging.debug("Dynamic DNS token retrieved from environment")
+    def load_dns_api_key_from_file(self):
+        try:
+        	credentials = json.load('credentials.json')
+        except Exception as e:
+        		logging.error('Credentials file not found. Error: {}'.format(e))
+        domain_api_key = credentials['dns_api_token']
+        
+        logging.debug("Dynamic DNS token retrieved from environment")
+            
         return domain_api_key
 
     def create_logger(self):
