@@ -1,3 +1,3 @@
 # dns-updater
 
-A simple utility to update a dynamic DNS entry at http://freedns.afraid.org/. 
+A simple Python 3.6 utility to update a dynamic DNS entry at http://freedns.afraid.org/. 
