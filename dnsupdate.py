@@ -74,8 +74,8 @@ class DNSUpdater(object):
     			logging.debug("Cannot load DNS API token from configuration file.")
     			raise AttributeError("Cannot load dynamic DNS API token.")
     		logging.debug("Dynamic DNS API token loaded from configuration file")
-    			
-			return dns_api_token
+            
+    	return dns_api_token
         
     def load_configuration_from_file(self):
     	try:
