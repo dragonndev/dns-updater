@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import os
 import httplib2 #https://github.com/httplib2/httplib2
 
@@ -37,8 +38,6 @@ class DNSUpdater(object):
         (resp_headers, content) = h_client.request("https://api.ipify.org?format=json", "GET")
         logging.debug("Response Headers: %s", resp_headers)
         logging.debug("Response JSON: %s", content)
-        if isinstance(content, bytes):
-            logging.debug("Type is Bytes")
 
         content_str = content.decode('utf-8')
 
@@ -74,20 +73,20 @@ class DNSUpdater(object):
     			logging.debug("Cannot load DNS API token from configuration file.")
     			raise AttributeError("Cannot load dynamic DNS API token.")
     		logging.debug("Dynamic DNS API token loaded from configuration file")
-            
+
     	return dns_api_token
         
     def load_configuration_from_file(self):
-    	try:
-    		app_config = json.loads("./config.jason")
-    	except Exception as e:
-    		logging.debug("Error loading configuration file. Exception: {}".format(e))
-    		return None
-    	
-    	return app_config
+        with open('config.json', 'r', encoding='utf-8-sig') as json_file:
+            text = json_file.read()
+            app_config = json.loads(text)
+            logging.info("Successfully loaded the configuration file. Host: {}".format(app_config["dns_hostname"]))
+        return app_config
     	
     def create_logger(self):
-        logging.basicConfig(filename='dns-updater.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
+        logging.basicConfig(filename='dns-updater.log',
+            level=logging.DEBUG,
+            format='%(asctime)s - %(levelname)s - %(message)s')
 
 DNS_UPDATE = DNSUpdater()
 DNS_UPDATE.update_dyn_dns_setting()
