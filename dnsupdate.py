@@ -48,13 +48,13 @@ class DNSUpdater(object):
     	if self.app_config is None:
     		dns_hostname = os.getenv("DNS_HOSTNAME")
     		if dns_hostname is None:
-    			logging.debug("DNS hostname not set in environment.")
+    			logging.error("DNS hostname not set in environment.")
     			raise AttributeError("Cannot load DNS hostname.")
     		logging.debug("DNS hostname: {} loaded from environment.".format(dns_hostname))
     	else:
     		dns_hostname = self.app_config["dns_hostname"]
     		if dns_hostname is None:
-    			logging.debug("Cannot load DNS hostname from configuration file.")
+    			logging.error("Cannot load DNS hostname from configuration file.")
     			raise AttributeError("Cannot load DNS hostname.")
     		logging.debug("DNS name: {}, loaded from configuration file.".format(dns_hostname))
     	
@@ -64,13 +64,13 @@ class DNSUpdater(object):
     	if self.app_config is None:
     		dns_api_token = os.getenv("FREE_DNS_API_TOKEN")
     		if dns_api_token is None:
-    			logging.debug("DNS API token not set in environment.")
+    			logging.error("DNS API token not set in environment.")
     			raise AttributeError("Cannot load DNS API token.")
     		logging.debug("Dynamic DNS API token loaded from environment")
     	else:
     		dns_api_token = self.app_config["dns_api_token"]
     		if dns_api_token is None:
-    			logging.debug("Cannot load DNS API token from configuration file.")
+    			logging.error("Cannot load DNS API token from configuration file.")
     			raise AttributeError("Cannot load dynamic DNS API token.")
     		logging.debug("Dynamic DNS API token loaded from configuration file")
 
@@ -81,6 +81,7 @@ class DNSUpdater(object):
             text = json_file.read()
             app_config = json.loads(text)
             logging.info("Successfully loaded the configuration file. Host: {}".format(app_config["dns_hostname"]))
+        
         return app_config
     	
     def create_logger(self):
