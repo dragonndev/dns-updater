@@ -6,4 +6,6 @@ COPY . /app
 
 RUN pip3 install -r requirements.txt
 
-CMD ["python3", "dnsupdate.py"]
+ENTRYPOINT [ "/usr/bin/python3" ]
+
+CMD ["dnsupdate.py"]

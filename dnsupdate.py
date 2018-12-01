@@ -2,7 +2,9 @@ import json
 import logging
 import time
 import os
+from pathlib import Path
 import httplib2 #https://github.com/httplib2/httplib2
+import schedule #https://github.com/dbader/schedule
 
 class DNSUpdater(object):
 
@@ -15,6 +17,13 @@ class DNSUpdater(object):
         self.app_config = self.load_configuration_from_file()
         self.dns_api_token = self.load_dns_api_token()
         self.dns_hostname = self.load_dns_hostname()
+        self.schedule_dns_update()
+
+    def schedule_dns_update(self):
+        schedule.every(1).days.do(self.update_dyn_dns_setting)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
     def update_dyn_dns_setting(self):
         ext_ip = self.retrieve_ip_address()
@@ -45,44 +54,32 @@ class DNSUpdater(object):
         return resp_json["ip"]
 
     def load_dns_hostname(self):
-    	if self.app_config is None:
-    		dns_hostname = os.getenv("DNS_HOSTNAME")
-    		if dns_hostname is None:
-    			logging.error("DNS hostname not set in environment.")
-    			raise AttributeError("Cannot load DNS hostname.")
-    		logging.debug("DNS hostname: {} loaded from environment.".format(dns_hostname))
-    	else:
-    		dns_hostname = self.app_config["dns_hostname"]
-    		if dns_hostname is None:
-    			logging.error("Cannot load DNS hostname from configuration file.")
-    			raise AttributeError("Cannot load DNS hostname.")
-    		logging.debug("DNS name: {}, loaded from configuration file.".format(dns_hostname))
-    	
-    	return dns_hostname    
+        dns_hostname = self.app_config["dns_hostname"]
+        if dns_hostname is None:
+            logging.error("Cannot load DNS hostname from configuration file.")
+            raise AttributeError("Cannot load DNS hostname.")
+        logging.debug("DNS name: {}, loaded from configuration file.".format(dns_hostname))
+        
+        return dns_hostname
     
     def load_dns_api_token(self):
-    	if self.app_config is None:
-    		dns_api_token = os.getenv("FREE_DNS_API_TOKEN")
-    		if dns_api_token is None:
-    			logging.error("DNS API token not set in environment.")
-    			raise AttributeError("Cannot load DNS API token.")
-    		logging.debug("Dynamic DNS API token loaded from environment")
-    	else:
-    		dns_api_token = self.app_config["dns_api_token"]
-    		if dns_api_token is None:
-    			logging.error("Cannot load DNS API token from configuration file.")
-    			raise AttributeError("Cannot load dynamic DNS API token.")
-    		logging.debug("Dynamic DNS API token loaded from configuration file")
-
-    	return dns_api_token
+        dns_api_token = os.getenv("FREE_DNS_API_TOKEN")
+        if dns_api_token is None:
+            logging.error("DNS API token not set in environment.")
+            raise AttributeError("Cannot load DNS API token.")
+        logging.debug("Dynamic DNS API token loaded from environment")
+        
+        return dns_api_token
         
     def load_configuration_from_file(self):
+        my_file = Path("./config.json")
+        if not my_file.is_file():
+            raise FileNotFoundError("Configuration file, config.json, not found.")
         with open('config.json', 'r', encoding='utf-8-sig') as json_file:
             text = json_file.read()
             app_config = json.loads(text)
             logging.info("Successfully loaded the configuration file. Host: {}".format(app_config["dns_hostname"]))
-        
-        return app_config
+            return app_config
     	
     def create_logger(self):
         logging.basicConfig(filename='dns-updater.log',
@@ -90,5 +87,3 @@ class DNSUpdater(object):
             format='%(asctime)s - %(levelname)s - %(message)s')
 
 DNS_UPDATE = DNSUpdater()
-DNS_UPDATE.update_dyn_dns_setting()
-#PrintOut DNS settings for sub-domain to validate IP address has been updated
